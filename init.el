@@ -38,7 +38,6 @@
         (call-interactively 'compile)))))
 
 (global-set-key (kbd "<f5>") 'my/toggle-compile-right)
-
 (global-set-key (kbd "<S-f5>") 'recompile)
 
 
@@ -46,37 +45,36 @@
 (load-theme 'gruber-darker t)
 (set-face-attribute 'default nil
 		    :family "JetBrains Mono"
-		    :height 150)
+		    :height 200)
 
 
 
-(setq default-directory "C:/Users/User/.emacs.d/projects")
+(setq default-directory "~/.emacs.d/projects")
 (advice-add 'find-file-read-args :before
             (lambda (&rest _)
-              (setq default-directory "C:/Users/User/.emacs.d/projects")))
+              (setq default-directory "~/.emacs.d/projects")))
 
 
 (defun my-image-logo-screen ()
-  "建立一個包含高清圖片的啟動 Buffer，可手動微調大小與左右位置"
   (let ((buf (get-buffer-create "*Welcome*"))
-        (img-path "C:/Users/User/.emacs.d/logo.png")
-        (img-height 900)    
-        (padding-left 16)) 
+        (img-path "~/.emacs.d/logo.png")
+        (img-height 1000)    
+        (padding-left 12)) 
     (with-current-buffer buf
       (read-only-mode -1)
       (erase-buffer)
       (setq-local display-line-numbers nil)
       
-      (insert "\n\n\n\n")
+      (insert "\n\n\n")
       
       (if (file-exists-p img-path)
           (let ((img (create-image img-path nil nil :max-height img-height)))
             (insert (make-string padding-left ?\s))
             (insert-image img)
-            (insert "\n"))
+            (insert "\n\n"))
         (insert "  [!] 找不到圖片檔，請檢查 img-path 路徑設定！\n"))
       
-      (insert "\n\n")
+      (insert "\n\n\n")
       (read-only-mode 1))
     buf))
 (setq initial-buffer-choice 'my-image-logo-screen)
@@ -89,6 +87,8 @@
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 
+(setq warning-minimum-level :error)
+
 (menu-bar-mode -1)
 
 (tool-bar-mode -1)
@@ -98,6 +98,11 @@
 (savehist-mode 1)
 
 (electric-pair-mode 1)
+
+(setq display-line-numbers-type 'relative)
+(global-display-line-numbers-mode 1)
+
+
 
 
 
@@ -160,7 +165,20 @@
 
 (global-set-key (kbd "C-w") 'delete-word-no-kill)
 
+(global-set-key (kbd "C-w") 'delete-char)
 
+;; 防止 C 模式與 Java 模式等的 Major Mode 覆蓋這個快捷鍵
+(with-eval-after-load 'cc-mode
+  (define-key c-mode-map (kbd "C-w") 'delete-char)
+  (define-key java-mode-map (kbd "C-w") 'delete-char))
+
+
+(defun goto-relative-line (arg)
+  "Move point ARG lines forward (or backward if negative)."
+  (interactive "nGoto relative line (+/-): ")
+  (forward-line arg))
+
+(global-set-key (kbd "M-s") 'goto-relative-line)
 
 
 (global-set-key (kbd "C-<down>") 'scroll-up-line)
@@ -178,4 +196,15 @@
 
 
 
-;;-----------------------------------------------
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages '(gruber-darker-theme pack rust-mode zig-mode)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
